@@ -1,1 +1,0 @@
-# S69_Preetham_Capstone_Ecanent
