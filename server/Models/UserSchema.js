@@ -10,4 +10,4 @@ const userSchema = new mongoose.Schema({
     isVerified:{type:String,default:false}
 },{timestamps:true})
 
-module.exports = mongoose.model('User',userSchema)
+export default mongoose.model('User', userSchema);

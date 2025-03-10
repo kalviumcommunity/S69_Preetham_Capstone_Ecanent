@@ -9,8 +9,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "express": "^4.21.2",
     "mongoose": "^8.12.1"
   }
