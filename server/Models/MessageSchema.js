@@ -7,4 +7,4 @@ const messageSchema = new mongoose.Schema({
   messageType: { type: String, enum: ["text", "image", "video", "file"], default: "text" },
 }, { timestamps: true });
 
-module.exports = mongoose.model("Message", messageSchema);
+export default mongoose.model("Message",messageSchema)

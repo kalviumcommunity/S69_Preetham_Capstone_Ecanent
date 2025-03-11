@@ -7,4 +7,4 @@ const chatSchema = new mongoose.Schema({
   groupAdmin: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, 
 }, { timestamps: true });
 
-module.exports = mongoose.model("Chat", chatSchema);
+export default mongoose.model("Chat",chatSchema)

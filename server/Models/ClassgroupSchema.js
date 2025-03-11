@@ -7,4 +7,4 @@ const classgroupSchema = new mongoose.Schema({
   subjects: [{ type: mongoose.Schema.Types.ObjectId, ref: "SubjectGroup" }], 
 }, { timestamps: true });
 
-module.exports = mongoose.model("ClassGroup", classgroupSchema);
+export default mongoose.model("ClassGroup",classgroupSchema)  
