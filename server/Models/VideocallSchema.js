@@ -9,4 +9,4 @@ const videoCallSchema = new mongoose.Schema({
   endTime: { type: Date },
 }, { timestamps: true });
 
-module.exports = mongoose.model("VideoCall", videoCallSchema);
+export default mongoose.model("VideoCall",videoCallSchema)

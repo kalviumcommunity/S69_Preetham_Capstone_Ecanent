@@ -8,4 +8,4 @@ const fileSchema = new mongoose.Schema({
   subjectGroup: { type: mongoose.Schema.Types.ObjectId, ref: "SubjectGroup" },
 }, { timestamps: true });
 
-module.exports = mongoose.model("File", fileSchema);
+export default mongoose.model("File",fileSchema)

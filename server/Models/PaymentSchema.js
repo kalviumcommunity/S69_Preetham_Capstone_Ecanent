@@ -8,4 +8,4 @@ const paymentSchema = new mongoose.Schema({
   transactionId: { type: String, unique: true },
 }, { timestamps: true });
 
-module.exports = mongoose.model("Payment", paymentSchema);
+export default mongoose.model("Payment",paymentSchema)

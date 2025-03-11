@@ -8,4 +8,4 @@ const subjectGroupSchema = new mongoose.Schema({
   managedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
 }, { timestamps: true });
 
-module.exports = mongoose.model("SubjectGroup", subjectGroupSchema);
+export default mongoose.model("SubjectGroup",subjectGroupSchema)
