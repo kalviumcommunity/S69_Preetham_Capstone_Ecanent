@@ -1,10 +1,14 @@
 import express from "express"
 import authR from "./Routes/AuthRoutes.js"
+import cors from 'cors'
 import 'dotenv/config'
+import connectToDB from "./DB.js"
 const app = express()
 const PORT = process.env.PORT || 5000
 app.use(express.json())
-app.use("/api/auth",authR)
+app.use(cors({origin: "http://localhost:5173",credentials:true}))
+
+app.use("/api/author",authR)
 
 app.get('/',(req,res)=>{
     res.send("Server running")
@@ -12,4 +16,6 @@ app.get('/',(req,res)=>{
 
 app.listen(PORT,()=>{
     console.log("Listening")
+    connectToDB();
+
 })
