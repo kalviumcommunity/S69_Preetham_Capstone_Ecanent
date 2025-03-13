@@ -11,7 +11,7 @@ export const signup = async(req,res)=>{
         const emailLower = email.toLowerCase();
         const existinguser = await User.findOne({email:emailLower});
         if(existinguser){
-            return res.json({success:false,message:"User already exists"})
+            return res.status(409).json({success:false,message:"User already exists"})
         }
 
         const hashedpassword = await bcrypt.hash(password,12);
@@ -27,7 +27,7 @@ export const signup = async(req,res)=>{
             maxAge: 7*24*60*60*1000
         })
 
-        return res.json({success:true})
+        return res.status(201).json({success:true})
 
     }catch(error){
         console.log(error.message)
