@@ -62,7 +62,7 @@ function Signup() {
       console.log("Signup successful:", postData.data);
       console.log(postData.status)
       if (postData.status === 201) {
-        navigate("/");
+        navigate("/verify-otp-middle");
       }
      
     }catch(error){
