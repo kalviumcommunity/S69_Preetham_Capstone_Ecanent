@@ -1,0 +1,72 @@
+.shape{
+    align-items: center;
+    padding: 20px;
+    max-width: 500px;
+    width: 300px;
+    max-height: 918px;
+    height: 600px;
+    box-shadow: 0px 0px 59px 21px rgba(200,189,189,0.7);
+    border-radius: 5px;
+}
+
+.forgot{
+    border: 2px solid black;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+    align-content: center;
+    border-radius: 5px;
+
+}
+
+.forgot-1{
+    border: 2px solid black;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+    align-content: center;
+    border-radius: 5px;
+}
+
+
+.not-forgot{
+    
+    border: 2px solid black;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+    align-content: center;
+    border-radius: 5px;
+
+}
+
+.not-forgot-1{
+    background-color: #3B3636;
+
+    border: 2px solid black;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+    align-content: center;
+    border-radius: 5px;
+}
+
+.dark-shape{
+    background-color: #3B3636;
+    align-items: center;
+    padding: 20px;
+    max-width: 500px;
+    width: 300px;
+    max-height: 918px;
+    height: 600px;
+    box-shadow: 0 0 59px 21px rgba(45, 15, 15, 0.34);
+    border-radius: 5px;
+}
