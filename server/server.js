@@ -5,6 +5,8 @@ import cookieParser from "cookie-parser";
 import authGoogle from "./Routes/Authgoogle.js";
 import session from "express-session";
 import passport from "passport";
+import userRouter from "./Routes/UserRoutes.js";
+import classRouter from "./Routes/ClassRoutes.js";
 import "./Config/Passport.js";
 import 'dotenv/config'
 import connectToDB from "./DB.js"
@@ -19,6 +21,8 @@ app.use(cors({
 }));
 app.use(cookieParser())
 app.use("/api/author",authR)
+app.use("/api/user",userRouter)
+app.use("/api/class",classRouter)
 
 app.use(session({
     secret: process.env.SESSION_SECRET || "some_secret",
