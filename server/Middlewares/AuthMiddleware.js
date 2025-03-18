@@ -23,4 +23,14 @@ const AuthMiddle = async(req,res,next)=>{
     }
 }
 
+export const checkRole = (roles) => {
+    return (req, res, next) => {
+      if (!roles.includes(req.user.role)) {
+        return res.status(403).json({ message: "Access Denied" });
+      }
+      next();
+    };
+  };
+
+
 export default AuthMiddle;

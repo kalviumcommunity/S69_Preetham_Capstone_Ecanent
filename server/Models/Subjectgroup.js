@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const subjectGroupSchema = new mongoose.Schema({
   subjectName: { type: String, required: true },
