@@ -7,6 +7,7 @@ import session from "express-session";
 import passport from "passport";
 import userRouter from "./Routes/UserRoutes.js";
 import classRouter from "./Routes/ClassRoutes.js";
+import subjectRouter from "./Routes/SubjectRoutes.js";
 import "./Config/Passport.js";
 import 'dotenv/config'
 import connectToDB from "./DB.js"
@@ -23,6 +24,7 @@ app.use(cookieParser())
 app.use("/api/author",authR)
 app.use("/api/user",userRouter)
 app.use("/api/class",classRouter)
+app.use("/api/subject",subjectRouter)
 
 app.use(session({
     secret: process.env.SESSION_SECRET || "some_secret",
