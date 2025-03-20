@@ -6,6 +6,7 @@ import ChatSchema from "../Models/ChatSchema.js"
 const classgroupSchema = new mongoose.Schema({
   className: { type: String, required: true }, 
   department: { type: String, required: true }, 
+      // Reference
   students: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   faculty: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], 
   subjects: [{ type: mongoose.Schema.Types.ObjectId, ref: "SubjectGroup" }], 
