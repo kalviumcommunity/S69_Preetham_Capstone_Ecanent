@@ -20,7 +20,7 @@ export const createSubject = async(req,res)=>{
 
         const newSubjectGroup = new SubjectGroup({subjectName,classGroup:classGroupId,faculty:faculty||[],students:students||[],managedBy,chat:null})
         await newSubjectGroup.save();
-        return res.status(201).json({ success: true, message: "Subject group created successfully", subjectGroup: newSubject });    
+        return res.status(201).json({ success: true, message: "Subject group created successfully", subjectGroup: newSubjectGroup });    
     }catch(error) {
         console.log(error.message);
         return res.status(500).json({ success: false, message: "Server Error" });

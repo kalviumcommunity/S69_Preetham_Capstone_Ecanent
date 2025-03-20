@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
     department:String,
     profilePic:String,
     isVerified:{type:Boolean,default:false},
+    // Reference
     classGroups: [{ type: mongoose.Schema.Types.ObjectId, ref: "ClassGroup" }], 
     subjectGroups: [{ type: mongoose.Schema.Types.ObjectId, ref: "SubjectGroup" }],
     onlineStatus: { type: Boolean, default: false },
