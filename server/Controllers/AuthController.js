@@ -6,9 +6,9 @@ import transporter from "../Config/NodeMailer.js";
 
 
 export const signup = async(req,res)=>{
-    const {name,email,password} = req.body;
-    if(!name||!email||!password){
-        return res.json({success:false,message:"Missing Details"})
+    const {name,email,password,role,institute} = req.body;
+    if(!name||!email||!password||!role){
+        return res.status(400).json({success:false,message:"Missing Details"})
     }
     try{
         const emailLower = email.toLowerCase();
@@ -16,13 +16,16 @@ export const signup = async(req,res)=>{
         if(existinguser){
             return res.status(409).json({success:false,message:"User already exists"})
         }
+        if (role !== "Admin" && (!institute || institute.trim() === "")) {
+            return res.status(400).json({ success: false, message: "Institute is required for Students and Faculty" });
+        }
 
         const hashedpassword = await bcrypt.hash(password,12);
 
-        const user = new User({name,email:emailLower,password:hashedpassword});
+        const user = new User({name,email:emailLower,password:hashedpassword,role,institute: role === "Admin" ? null : institute});
         await user.save();
 
-        const token = jwt.sign({id: user.id},process.env.JWT_SECRET,{expiresIn:'7d'});
+        const token = jwt.sign({id: user._id},process.env.JWT_SECRET,{expiresIn:'7d'});
         res.cookie('token',token,{
             httpOnly:true,
             secure:process.env.NODE_ENV === 'production',
@@ -51,29 +54,31 @@ export const signup = async(req,res)=>{
 export const login = async(req,res)=>{
     const {email,password} = req.body;
     if(!email||!password){
-        return res.json({success:false,message:"Email and Password are required!"})
+        return res.status(400).json({success:false,message:"Email and Password are required!"})
     }
     try{
         const emailLower = email.toLowerCase();
         const user = await User.findOne({email:emailLower})
         if(!user){
-            return res.json({success:false,message:"Invalid Email"})
+            return res.status(400).json({success:false,message:"Invalid Email and Password"})
         }
         const isMatch = await bcrypt.compare(password,user.password);
         if(!isMatch){
-            return res.json({success:false,message:"Invalid Password"})
+            return res.status(401).json({success:false,message:"Invalid Email and Password"})
         }
-        const token = jwt.sign({id: user.id},process.env.JWT_SECRET,{expiresIn:'7d'});
+        console.log("🔍 User at Login:", user);
+        const token = jwt.sign({id: user._id},process.env.JWT_SECRET,{expiresIn:'7d'});
+        console.log("Generated Token ID:", user._id)
         res.cookie('token',token,{
             httpOnly:true,
             secure:process.env.NODE_ENV === 'production',
-            sameSite:process.env.NODE_ENV === 'production'? 'none':'strict',
+            sameSite:process.env.NODE_ENV === 'production'? 'none':'lax',
             maxAge: 7*24*60*60*1000
         })
 
-        return res.json({success:true});
+        return res.status(200).json({success:true});
     }catch(error){
-        return res.json({success:false,message:"Internal Server Error"})
+        return res.status(500).json({success:false,message:"Internal Server Error"})
     }
 }
 
