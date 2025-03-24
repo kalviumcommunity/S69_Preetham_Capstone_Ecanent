@@ -122,3 +122,19 @@ export const updateClass = async(req,res)=>{
         return res.status(500).json({ success:false,message: "Server Error" });   
     }
 }
+
+
+export const deleteClass = async(req,res)=>{
+    const { id } = req.params;
+    try {
+        const classes = await ClassGroup.findById(id);
+        if(!classes){
+            return res.status(404).json({ message: "Class group not found" });
+        }
+        await classes.deleteOne();
+        return res.json({ success:true,message: "Class group deleted successfully" });
+    } catch (error) {
+        console.log(error.message)
+        return res.status(500).json({ success:false,message: "Server Error" });   
+    }
+}

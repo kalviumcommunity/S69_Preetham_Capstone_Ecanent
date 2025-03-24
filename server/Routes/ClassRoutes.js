@@ -10,6 +10,7 @@ classRouter.post("/create",AuthMiddle,createClass);
 classRouter.get("/",AuthMiddle,getAllClass);
 classRouter.get("/:id",AuthMiddle,getClassById);
 classRouter.put("/:id",AuthMiddle,checkRole(["Admin","HOD"]),updateClass);  
+classRouter.delete("/:id",AuthMiddle,checkRole(["Admin"]),deleteClass);
 
 
 export default classRouter;
