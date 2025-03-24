@@ -65,3 +65,21 @@ export const deleteUser = async (req, res) => {
         return res.status(500).json({ success: false, message: "Server Error" });
     }
 };
+
+export const getInstitution = async(req,res)=>{
+    try {
+        const institute = await Institute.find().select("name -_id");
+        const instituteNames = institute.map(inst => inst.name);
+        if (instituteNames.length === 0) {
+            return res.json({ success: false, message: "No institutes found!" });
+        }
+        return res.json({
+            success:true,
+            institute:instituteNames
+        })
+
+    } catch (error) {
+        console.log(error.message)
+        res.json({success:false,message:"Internal Server Error"})
+    }
+}
