@@ -65,3 +65,26 @@ export const deleteUser = async (req, res) => {
         return res.status(500).json({ success: false, message: "Server Error" });
     }
 };
+
+export const getMembers = async (req, res) => {
+    try {
+        const {userId} = req.body;
+        const user  = await User.findById(userId).select("institute")
+
+        if (!user || !user.institute) {
+            return res.status(400).json({ success: false, message: "Institute not found for the user!" });
+        }
+
+        const members = await User.find({ institute:user.institute })
+            .select("name role profilePic _id");
+
+        return res.json({
+            success: true,
+            members
+        });
+
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+};
