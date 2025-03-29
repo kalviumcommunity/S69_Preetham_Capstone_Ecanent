@@ -4,7 +4,7 @@ import google from "../assets/google.jpg"
 import dgoogle from '../assets/darkgoogle.png'
 import {Link} from 'react-router-dom'
 import { useState,useEffect } from 'react'
-import DarkMode from "../components/DarkMode.jsx";
+import DarkMode from "../components/DarkMode";
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
