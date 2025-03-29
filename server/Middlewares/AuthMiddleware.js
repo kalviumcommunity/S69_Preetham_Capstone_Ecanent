@@ -1,5 +1,7 @@
 import jwt from "jsonwebtoken";
 import 'dotenv/config'
+import User from "../Models/UserSchema.js";
+
 
 const AuthMiddle = async(req,res,next)=>{
     const {token} = req.cookies;
@@ -24,12 +26,13 @@ const AuthMiddle = async(req,res,next)=>{
 }
 
 export const checkRole = (roles) => {
-    return (req, res, next) => {
-      if (!roles.includes(req.user.role)) {
-        return res.status(403).json({ message: "Access Denied" });
-      }
-      next();
-    };
+    return async(req, res, next) => {
+        const user = await User.findById(req.body.userId);
+        if (!roles.includes(user.role)) {
+          return res.status(403).json({ message: "Access Denied" });
+        }
+        next();
+      };
   };
 
 

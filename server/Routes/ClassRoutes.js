@@ -2,7 +2,7 @@ import express from 'express';
 
 import AuthMiddle from "../Middlewares/AuthMiddleware.js"
 import {checkRole} from "../Middlewares/AuthMiddleware.js"
-import { createClass, getAllClass, getClassById,updateClass } from '../Controllers/ClassController.js';
+import { createClass, getAllClass, getClassById,updateClass, deleteClass } from '../Controllers/ClassController.js';
 
 const classRouter = express.Router();    
 

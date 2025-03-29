@@ -1,45 +1,89 @@
 import SubjectGroup from "../Models/Subjectgroup.js"
 import ClassGroup from "../Models/ClassgroupSchema.js"
 
-export const createSubject = async(req,res)=>{
-    const {subjectName,classGroupId,faculty,students,managedBy} = req.body;
-    if(!subjectName || !classGroupId){
-        return res.status(400).json({ success: false, message: "Subject name and classGroupId are required" });
+export const createSubject = async (req, res) => {
+    const { classId } = req.params;
+    const { subjectName, faculty, students, managedBy } = req.body;
+
+    if (!subjectName || !classId) {
+        return res.status(400).json({ success: false, message: "Subject name and classId are required" });
     }
-    try{
-        const classes = await ClassGroup.findById(classGroupId);
-        if(!classes){
+
+    try {
+        // Find the ClassGroup and populate createdBy
+        const classGroup = await ClassGroup.findById(classId).populate("createdBy");
+        if (!classGroup) {
             return res.status(404).json({ success: false, message: "Class group not found" });
         }
 
-        const existingSubject = await SubjectGroup.findOne({ subjectName, classGroupId });
-    
+        // Check for duplicate subject name within the same class group
+        const existingSubject = await SubjectGroup.findOne({ subjectName, classGroup: classId });
         if (existingSubject) {
             return res.status(400).json({ success: false, message: "Subject name already exists. Please use another name." });
         }
 
-        const newSubjectGroup = new SubjectGroup({subjectName,classGroup:classGroupId,faculty:faculty||[],students:students||[],managedBy,chat:null})
+        // Use the class group creator as managedBy if not provided
+        const manager = managedBy || classGroup.createdBy._id;
+
+        // Create a list of users for the chat (students, faculty, and manager)
+        const chatUsers = [
+            ...new Set([
+                ...(students || []),
+                ...(faculty || []),
+                manager,
+            ].filter(id => id && id.toString().trim() !== "")) // Remove null, undefined, or empty strings
+        ];
+
+        // Create a new chat for the subject group
+        const newChat = new Chat({
+            users: chatUsers,
+            isGroupChat: true,
+            name: `${subjectName} Chat`,
+        });
+        await newChat.save();
+
+        // Create the new SubjectGroup
+        const newSubjectGroup = new SubjectGroup({
+            subjectName,
+            classGroup: classId,
+            faculty: faculty || [],
+            students: students || [],
+            managedBy: manager,
+            chat: newChat._id,
+        });
         await newSubjectGroup.save();
-        return res.status(201).json({ success: true, message: "Subject group created successfully", subjectGroup: newSubjectGroup });    
-    }catch(error) {
+
+        // Update the ClassGroup to add the new SubjectGroup to its subjects array
+        await ClassGroup.findByIdAndUpdate(
+            classId,
+            { $push: { subjects: newSubjectGroup._id } },
+            { new: true }
+        );
+
+        return res.status(201).json({
+            success: true,
+            message: "Subject group created successfully",
+            subjectGroup: newSubjectGroup,
+        });
+    } catch (error) {
         console.log(error.message);
         return res.status(500).json({ success: false, message: "Server Error" });
     }
-}
+};
 
 export const getAllSubjects = async(req,res)=>{
-    const { classGroupId } = req.params; 
-    if(!classGroupId){
+    const { classId } = req.params; 
+    if(!classId){
         return res.status(400).json({ success: false, message: "classGroupId is required" });
     }
     try {
-        const subjects = await SubjectGroup.find({ classGroup: classGroupId })
+        const subjects = await SubjectGroup.find({ classGroup: classId })
         .populate("students","name email")
         .populate("faculty","name email")
         .populate("chat")
         .exec();
 
-        if (!subjects || subjects.length === 0) {
+        if (!subjects) {
             return res.status(404).json({ success: false, message: "No subjects found for this class group." });
         }
 
@@ -57,13 +101,13 @@ export const getSubjectsById = async(req,res)=>{
     }
     try {
         const subject = await SubjectGroup.findById(subjectId)
-        .populate("students","name email")
-        .populate("faculty","name email")
+        .populate("students","name email role")
+        .populate("faculty","name email role")
         .populate({
             path: "chat",
             populate: {
                 path: "messages", 
-                populate: { path: "sender", select: "name email" }
+                populate: { path: "sender", select: "name email role" }
             }
         })
         .exec();
@@ -119,10 +163,32 @@ export const updateSubject = async(req,res)=>{
         }
 
         await subject.save();
+
+
+
         return res.status(200).json({ success:true,message: "Subject group updated successfully", subject });
     } catch (error) {
         console.log(error.message)
         return res.status(500).json({ success:false,message: "Server Error" });  
+    }
+}
+
+
+export const deleteSubject = async(req,res)=>{
+    const { subjectId } = req.params;
+    if(!subjectId){
+        return res.status(400).json({ success: false, message: "SubjectGroup Id is required" });
+    }
+    try {
+        const subject = await SubjectGroup.findByIdAndDelete(subjectId);
+        console.log(subject)
+        if (!subject) {
+            return res.status(404).json({ success: false, message: "Subject group not found" });
+        }
+        return res.json({ success:true,message: "Subject group deleted successfully" });
+    } catch (error) {
+        console.log(error.message)
+        return res.status(500).json({ success:false,message: "Server Error" });   
     }
 }
 

@@ -1,12 +1,7 @@
 import mongoose from "mongoose";
-import subjectGroupSchema from "../Models/Subjectgroup.js"
 import ChatSchema from "../Models/ChatSchema.js"
-
-
 const classgroupSchema = new mongoose.Schema({
   className: { type: String, required: true }, 
-  department: { type: String, required: true }, 
-      // Reference
   students: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   faculty: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], 
   subjects: [{ type: mongoose.Schema.Types.ObjectId, ref: "SubjectGroup" }], 
@@ -15,6 +10,4 @@ const classgroupSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 classgroupSchema.index({ className: 1, createdBy: 1 }, { unique: true });
-
-
 export default mongoose.model("ClassGroup",classgroupSchema)  
