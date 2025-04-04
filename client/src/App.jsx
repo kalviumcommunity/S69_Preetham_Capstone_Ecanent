@@ -6,6 +6,7 @@ import VerifyOtpMiddle from './Pages/VerifyOtpMiddle'
 import {ToastContainer} from 'react-toastify'
 import Profile from './Pages/Profile'
 import Login from './components/Login'
+// import Chat from './Pages/Chat'
 
 
 function App() {
@@ -19,6 +20,8 @@ function App() {
         <Route path='/verify-otp-middle' element={<VerifyOtpMiddle/>}></Route>
         <Route path='/profile' element={<Profile/>}></Route>
         <Route path='/login' element={<Login/>}></Route>
+        {/* <Route path='/chat' element={<Chat/>}></Route> */}
+
       </Routes>
       </div>
 

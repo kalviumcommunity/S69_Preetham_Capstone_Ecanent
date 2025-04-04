@@ -1,0 +1,90 @@
+
+.received {
+    background-color: #fff;
+    color: #000;
+    align-self: flex-start;
+    border-radius: 10px 10px 10px 0;
+    margin-top: 2px;
+}
+
+.sent {
+    border-radius: 10px 10px 0 10px;
+    margin-top: 2px;
+
+}
+
+/* Tail for Received Message */
+.received::after {
+    content: "";
+    position: absolute;
+    left: -8px;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid b;
+   
+}
+
+
+.sent::after {
+    content: "";
+    position: absolute;
+    right: -8px;
+    bottom: 0;
+    width: 0;
+    height: 0;
+   
+  
+   
+}
+
+
+/* Chat.css */
+.tab-bar {
+    display: flex;
+    overflow-y: auto;
+    border-bottom: 2px solid #d1d5db; 
+  }
+  
+  .tab {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 2rem;
+    cursor: pointer;
+    flex-direction: column;
+    border-right: 1px solid #d1d5db;
+    background-color: #e5e7eb;
+    color: #374151; 
+  }
+  
+  .tab.active {
+    z-index: 1;
+    background-color: #67e8f9;
+    color: #000;
+    border-radius: 2px;
+}
+  
+  .tab:hover:not(.active) {
+    background-color: #d1d5db; 
+  }
+  
+  .tab span {
+    font-size: 0.875rem; 
+    white-space: nowrap;
+    overflow: clip;
+    text-overflow: ellipsis;
+    max-width: 150px;
+  }
+  
+  .tab button {
+    margin-left: 0.5rem;
+    color: #6b7280;
+  }
+  
+  .tab button:hover {
+    color: #ef4444;
+  }
+
+
+  

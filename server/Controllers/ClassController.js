@@ -1,6 +1,6 @@
 import ClassGroup from "../Models/ClassgroupSchema.js"
 import User from "../Models/UserSchema.js";
-
+import mongoose from "mongoose";
 
 export const createClass = async (req, res) => {
     const { className, students, faculty, subjects, createdBy } = req.body;
