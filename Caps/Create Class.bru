@@ -1,0 +1,19 @@
+meta {
+  name: Create Class
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://localhost:5000/api/class/create
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "className":"Mechanics",
+    "department":"ECE Dept",
+    "createdBy": "67f3bdaf5897785fc53f7275"
+  }
+}
