@@ -1,0 +1,21 @@
+meta {
+  name: User
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:5000/api/author/signup
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name":"Check",
+    "email":"check@gmail.com",
+    "password":"Pp@2526jk",
+    "role":"Admin",
+    "institute":"Kalvium"
+  }
+}
