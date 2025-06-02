@@ -2,8 +2,7 @@ import bcrypt from "bcryptjs"
 import jwt from 'jsonwebtoken'
 import User from "../Models/UserSchema.js"
 import OTP from "../Models/OtpSchema.js"
-import transporter from "../Config/NodeMailer.js";
-
+import transporter from "../Config/NodeMailer.js"
 
 export const signup = async(req,res)=>{
     const {name,email,password,role,institute} = req.body;
@@ -28,8 +27,8 @@ export const signup = async(req,res)=>{
         const token = jwt.sign({id: user._id},process.env.JWT_SECRET,{expiresIn:'7d'});
         res.cookie('token',token,{
             httpOnly:true,
-            secure:process.env.NODE_ENV === 'production',
-            sameSite:process.env.NODE_ENV === 'production'? 'none':'strict',
+            secure:true,
+            sameSite:"none",
             maxAge: 7*24*60*60*1000
         })
 
@@ -71,8 +70,8 @@ export const login = async(req,res)=>{
         console.log("Generated Token ID:", user._id)
         res.cookie('token',token,{
             httpOnly:true,
-            secure:process.env.NODE_ENV === 'production',
-            sameSite:process.env.NODE_ENV === 'production'? 'none':'lax',
+            secure:true,
+            sameSite:"none",
             maxAge: 7*24*60*60*1000
         })
 
@@ -89,6 +88,7 @@ export const logout = async(req,res)=>{
             secure:process.env.NODE_ENV === 'production',
             sameSite:process.env.NODE_ENV === 'production'? 'none':'strict',
         })
+        localStorage.removeItem("activeSection");
         return res.json({success:true,message:"User Logged Out"})
     }catch(error){
         return res.json({success:false,message:"Internal Server Error"})
@@ -99,13 +99,12 @@ export const sendVerifyOtp = async(req,res)=>{
     try{
         const {userId} = req.body;
         const user = await User.findById(userId)
-        console.log(user)
+        // console.log(user)
         // console.log(userId)
         if (!user) {
             return res.status(404).json({ success: false, message: "User not found" });
         }
-        if(user.isVerified === true){
-            console.log("verified already!")
+        if(user.isVerified){
             return res.status(400).json({success:false,message:"Account already verified"})
         }
         const otp = String(Math.floor(100000 + Math.random()*900000));
@@ -159,13 +158,6 @@ export const verifyEmail = async(req,res)=>{
        
         await user.save();
         await OTP.deleteOne({ _id: otpEntry._id });
-        const mailOptions = {
-            from:process.env.SENDER_EMAIL,
-            to:user.email,
-            subject:'Email Verified Successfully',
-            text:`Your Email has been successfully verified. Please start using our website.`
-        } 
-        await transporter.sendMail(mailOptions);
         return res.status(200).json({success:true,message:'Email Verified Successfully'})
     }catch(error){
         console.log(error.message)
@@ -179,5 +171,78 @@ export const isAuthenticated = async(req,res)=>{
     } catch (error) {
         console.log(error.message);
         return res.json({success:false});
+    }
+}
+
+export const sendResetOtp = async(req,res)=>{
+    const {email} = req.body;
+        if(!email){
+            return res.json({success:false,message:"Email is required."})
+        }
+    try {
+        const user = await User.findOne({email});
+        if(!user){
+            return res.json({success:false,message:"User not found!"});
+        }
+        const userId = user._id;
+        const otp = String(Math.floor(100000 + Math.random()*900000));
+        let otpEntry = await OTP.findOne({ user: userId });
+        if(!otpEntry){
+            otpEntry = new OTP({user:userId});
+        }
+        console.log(otpEntry)
+        otpEntry.otp = otp;
+        otpEntry.expiresAt = Date.now() + 10*60*1000
+
+        await user.save();
+        await otpEntry.save();
+        const mailOptions = {
+            from:process.env.SENDER_EMAIL,
+            to:user.email,
+            subject:'Password Reset OTP',
+            text:`Your OTP for resetting your passord is ${otp}. Use this OTP to proceed with resetting your password.`
+        } 
+        await transporter.sendMail(mailOptions);
+        res.json({success:true,message:"Forgot Password OTP sent on Email."})
+
+        
+    } catch (error) {
+        console.log(error.message)
+        res.json({success:false,message:"Internal Server Error"})
+    }
+}
+
+export const resetPassword = async(req,res)=>{
+    const {email,otp,newpassword} = req.body;
+    if(!email||!otp||!newpassword){
+        return res.json({success:false,message:"Email, OTP and New Password are required."})
+    }
+    try {
+        const user = await User.findOne({email});
+        if(!user){
+            return res.json({success:false,message:"User not found!"});
+        }
+        const userId = user._id;
+        const otpEntry = await OTP.findOne({ user: userId });
+        // console.log(otp)
+
+        if(!otpEntry){
+            return res.json({success:false,message:"OTP missing"})
+        }
+        if(otpEntry.otp===""|| otpEntry.otp !== otp){
+            return res.json({success:false,message:"Invalid OTP"})
+        }
+        if(otpEntry.expiresAt<Date.now()){
+            return res.json({success:false,message:"OTP Expired"})
+        }
+        const hashedpassword = await bcrypt.hash(newpassword,12);
+        user.password = hashedpassword;
+        await user.save();
+        await OTP.deleteOne({ _id: otpEntry._id });
+        return res.json({success:true,message:'Password has been reset Successfully.'})
+        
+    } catch (error) {
+        console.log(error.message)
+        res.json({success:false,message:"Internal Server Error"})
     }
 }
