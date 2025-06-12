@@ -6,7 +6,7 @@ import passport from "passport";
 import cookieParser from "cookie-parser";
 import "./Config/Passport.js";
 import authR from "./Routes/AuthRoutes.js"
-import authGoogle from "./Routes/AuthGoogle.js"
+import authGoogle from "./Routes/Authgoogle.js"
 import userRouter from "./Routes/UserRoutes.js";
 import classRouter from "./Routes/ClassRoutes.js";
 import subjectRouter from "./Routes/SubjectRoutes.js";
