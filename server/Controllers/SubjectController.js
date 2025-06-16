@@ -1,5 +1,6 @@
 import SubjectGroup from "../Models/Subjectgroup.js"
 import ClassGroup from "../Models/ClassgroupSchema.js"
+import Chat from "../Models/ChatSchema.js";
 
 export const createSubject = async (req, res) => {
     const { classId } = req.params;
@@ -10,31 +11,26 @@ export const createSubject = async (req, res) => {
     }
 
     try {
-        // Find the ClassGroup and populate createdBy
         const classGroup = await ClassGroup.findById(classId).populate("createdBy");
         if (!classGroup) {
             return res.status(404).json({ success: false, message: "Class group not found" });
         }
 
-        // Check for duplicate subject name within the same class group
         const existingSubject = await SubjectGroup.findOne({ subjectName, classGroup: classId });
         if (existingSubject) {
             return res.status(400).json({ success: false, message: "Subject name already exists. Please use another name." });
         }
 
-        // Use the class group creator as managedBy if not provided
         const manager = managedBy || classGroup.createdBy._id;
 
-        // Create a list of users for the chat (students, faculty, and manager)
         const chatUsers = [
             ...new Set([
                 ...(students || []),
                 ...(faculty || []),
                 manager,
-            ].filter(id => id && id.toString().trim() !== "")) // Remove null, undefined, or empty strings
+            ].filter(id => id && id.toString().trim() !== "")) 
         ];
 
-        // Create a new chat for the subject group
         const newChat = new Chat({
             users: chatUsers,
             isGroupChat: true,
@@ -42,7 +38,6 @@ export const createSubject = async (req, res) => {
         });
         await newChat.save();
 
-        // Create the new SubjectGroup
         const newSubjectGroup = new SubjectGroup({
             subjectName,
             classGroup: classId,
@@ -53,7 +48,6 @@ export const createSubject = async (req, res) => {
         });
         await newSubjectGroup.save();
 
-        // Update the ClassGroup to add the new SubjectGroup to its subjects array
         await ClassGroup.findByIdAndUpdate(
             classId,
             { $push: { subjects: newSubjectGroup._id } },
@@ -158,12 +152,16 @@ export const updateSubject = async(req,res)=>{
         ).populate("students", "name email")
          .populate("faculty", "name email");
 
-        if (!subject) {
+       
+        console.log("subject" , subject.chat);
+        const chat = await Chat.findById(subject.chat[0]._id);
+
+        let users = [...new Set([subject.createdBy, ...subject.students, ...subject.faculty])];
+        users = users.filter(x=>x!==undefined)
+        const completed = await Chat.findByIdAndUpdate(subject.chat[0]._id, { $set: { users: users } },{ new: true, runValidators: true })
+        if (!subject || !completed) {
             return res.status(404).json({ success: false, message: "Subject group not found" });
         }
-
-        await subject.save();
-
 
 
         return res.status(200).json({ success:true,message: "Subject group updated successfully", subject });
@@ -191,4 +189,3 @@ export const deleteSubject = async(req,res)=>{
         return res.status(500).json({ success:false,message: "Server Error" });   
     }
 }
-

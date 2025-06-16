@@ -1,6 +1,8 @@
 import ClassGroup from "../Models/ClassgroupSchema.js"
 import User from "../Models/UserSchema.js";
-import mongoose from "mongoose";
+import Chat from "../Models/ChatSchema.js";
+import mongoose from "mongoose"; 
+
 
 export const createClass = async (req, res) => {
     const { className, students, faculty, subjects, createdBy } = req.body;
@@ -23,7 +25,6 @@ export const createClass = async (req, res) => {
             return res.status(400).json({ success: false, message: "Class name already exists. Please use another name." });
         }
 
-        // Create the Chat document
         const users = [...new Set([createdBy, ...students, ...faculty])];
         const chat = new Chat({
             isGroupChat: true,
@@ -34,14 +35,13 @@ export const createClass = async (req, res) => {
         });
         await chat.save();
 
-        // Create the ClassGroup and link the Chat
         const newClass = new ClassGroup({
             className,
             students: students || [],
             faculty: faculty || [],
             subjects: subjects || [],
             createdBy,
-            chat: chat._id, // Link the Chat document
+            chat: chat._id, 
         });
         await newClass.save();
 
@@ -57,9 +57,11 @@ export const createClass = async (req, res) => {
             return res.status(400).json({ success: false, message: "Class name already exists. Please use another name." });
         }
         console.log(error.message);
-        return res.status(500).json({ success: false, message: "Server Error" });
+        return res.status(500).json({ success: false, message: "Server Error",detail:error.message });
     }
 };
+
+
 export const getAllClass = async (req, res) => {
     const { userId } = req.body;
 
@@ -81,16 +83,13 @@ export const getAllClass = async (req, res) => {
             { 
                 path: "chat", 
                 select: "name users groupAdmin _id",
-                match: { isGroupChat: true }, // Ensure it's a group chat
+                match: { isGroupChat: true }, 
                 populate: [
                     { path: "users", select: "name email" },
                     { path: "groupAdmin", select: "name email" },
                 ]
             }
-        ]);
-
-        // Filter out classes where `chat` is null (i.e., classes without group chats)
-        
+        ]);        
 
         return res.status(200).json({
             success: true,
@@ -102,6 +101,7 @@ export const getAllClass = async (req, res) => {
         return res.status(500).json({ success: false, message: "Server Error" });
     }
 };
+
 export const getClassById = async(req,res)=>{
     const {id} = req.params;
     try{
@@ -119,6 +119,7 @@ export const getClassById = async(req,res)=>{
     }
     
 }
+
 export const updateClass = async(req,res)=>{
     const { id } = req.params;
     const {className, studentsToAdd, studentsToRemove, facultyToAdd, facultyToRemove, subjects } = req.body;
@@ -147,8 +148,14 @@ export const updateClass = async(req,res)=>{
         }
 
         const classes = await ClassGroup.findByIdAndUpdate(id, updateFields, { new: true, runValidators: true });
+        console.log(classes);
+        const chat = await Chat.findById(classes.chat._id);
+        console.log(chat);
+        let users = [...new Set([classes.createdBy, ...classes.students, ...classes.faculty])];
+        users = users.filter(x=>x!==undefined)
+        const completed = await Chat.findByIdAndUpdate(classes.chat._id, { $set: { users: users } },{ new: true, runValidators: true })
 
-        if (!classes) {
+        if (!classes || !completed) {
             return res.status(404).json({ success: false, message: "Class group not found" });
         }
 
@@ -160,6 +167,7 @@ export const updateClass = async(req,res)=>{
         return res.status(500).json({ success:false,message: "Server Error" });   
     }
 }
+
 export const deleteClass = async(req,res)=>{
     const { id } = req.params;
     try {
@@ -174,3 +182,5 @@ export const deleteClass = async(req,res)=>{
         return res.status(500).json({ success:false,message: "Server Error" });   
     }
 }
+
+
