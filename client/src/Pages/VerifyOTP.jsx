@@ -1,8 +1,9 @@
 import React, { useRef, useState } from 'react'
-import DarkMode from '../components/DarkMode'
+import DarkMode from "../components/DarkMode";
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify'
 
 import "./VerifyOTP.css"
 
@@ -11,7 +12,7 @@ function VerifyOTP() {
   const [errorMessage,setErrorMessage] = useState("")
   const [resendMessage,setResendMessage] = useState("")
 
-  const isDarkMode = DarkMode();
+  const {isDarkMode} = DarkMode();
   const navigate = useNavigate()
 
   const inputRef = useRef([])
@@ -43,18 +44,23 @@ function VerifyOTP() {
       e.preventDefault();
       const otpArray = inputRef.current.map(e=>e.value)
       const otp = otpArray.join("")
-      const data = await axios.post("http://localhost:3000/api/author/verify-account",{otp}, { withCredentials: true })
+      const data = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/author/verify-account`,{otp}, { withCredentials: true })
       if(data.status === 200){
-        navigate("/");
+        toast.success("User Verified Successfully!")
+        
+        navigate("/chat");
       }
     }catch(error){
       if (error.response && error.response.status === 400) {
         setErrorMessage("OTP expired");
+        toast.error("OTP expired")
       } else if (error.response) {
         setErrorMessage("Check OTP again.");
+        toast.error("Check OTP again.")
       } else {
         console.log(error.message)
         setErrorMessage("Server error. Please try again later.");
+        toast.error("Server error. Please try again later.")
       }
     }
     }
@@ -63,7 +69,7 @@ function VerifyOTP() {
       setResendMessage("");
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/author/send-verify-otp",
+        `${import.meta.env.VITE_BACKEND_URL}/api/author/send-verify-otp`,
         {},
         { withCredentials: true }
       );

@@ -9,7 +9,7 @@ function VerifyOtpMiddle() {
     useEffect(()=>{
         const postOtp =async()=>{
             try{
-                const postData = await axios.post("http://localhost:3000/api/author/send-verify-otp",{}, { withCredentials: true })
+                const postData = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/author/send-verify-otp`,{}, { withCredentials: true })
                 // console.log("Signup successful:", postData.data);
                 console.log(postData.status)
                 if (postData.status === 200) {
@@ -19,14 +19,12 @@ function VerifyOtpMiddle() {
               }catch(error){
                 console.log(error.message)
                 if (error.response) {
-                //   navigate('/'); 
-                  console.log(error.message)
+                  navigate('/'); 
+                  // console.log(error.message)
 
               } else {
                   console.error("Network or server error");
-                  console.log(error.message)
-
-                //   navigate('/'); 
+                  navigate('/'); 
               }
               }
         }
