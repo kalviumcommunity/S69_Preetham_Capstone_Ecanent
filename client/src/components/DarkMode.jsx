@@ -1,21 +1,35 @@
 import { useState, useEffect } from "react";
 
-const DarkMode = () => {
+const useDarkMode = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
-    function checkTime() {
-      const hours = new Date().getHours();
-      setIsDarkMode(hours >= 18 || hours < 6);
+    const savedPreference = localStorage.getItem("darkModePreference");
+
+    if (savedPreference !== null) {
+      setIsDarkMode(savedPreference === "true");
+    } else {
+      checkTime();
     }
 
-    checkTime();
+    function checkTime() {
+      const hours = new Date().getHours();
+      const shouldBeDark = hours >= 18 || hours < 6;
+      setIsDarkMode(shouldBeDark);
+    }
+
     const intervalId = setInterval(checkTime, 60 * 60 * 1000);
 
     return () => clearInterval(intervalId);
   }, []);
 
-  return isDarkMode;
+  const toggleDarkMode = () => {
+    const newMode = !isDarkMode;
+    setIsDarkMode(newMode);
+    localStorage.setItem("darkModePreference", newMode.toString());
+  };
+
+  return { isDarkMode, toggleDarkMode };
 };
 
-export default DarkMode;
+export default useDarkMode;
