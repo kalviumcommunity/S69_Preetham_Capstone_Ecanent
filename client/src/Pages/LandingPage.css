@@ -1,0 +1,155 @@
+.landing-page {
+background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+color: #fff;
+min-height: 100vh;
+overflow-x: hidden;
+}
+
+.hero {
+position: relative;
+height: 100vh;
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+text-align: center;
+padding: 0 20px;
+}
+
+.hero::before {
+content: "";
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 30%;
+background: linear-gradient(180deg, rgba(0, 255, 255, 0.3) 0%, transparent 100%);
+filter: blur(50px);
+z-index: 1;
+}
+
+.hero::after {
+content: "";
+position: absolute;
+top: 0;
+left: 50%;
+transform: translateX(-50%);
+width: 80%;
+height: 2px;
+background: cyan;
+box-shadow: 0 0 20px cyan;
+z-index: 2;
+}
+
+.hero h1 {
+font-size: 5rem;
+font-weight: 700;
+text-transform: uppercase;
+letter-spacing: 2px;
+z-index: 3;
+text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+.hero h1 span {
+color: cyan;
+text-shadow: 0 0 20px cyan;
+}
+
+.hero p {
+font-size: 1.5rem;
+font-weight: 300;
+margin-top: 10px;
+z-index: 3;
+opacity: 0.8;
+}
+
+.cta-buttons {
+margin-top: 30px;
+z-index: 3;
+}
+
+.cta-buttons a {
+display: inline-block;
+padding: 12px 30px;
+margin: 0 10px;
+text-decoration: none;
+font-size: 1.2rem;
+font-weight: 500;
+border-radius: 25px;
+transition: all 0.3s ease;
+}
+
+.cta-buttons .signup {
+background: cyan;
+color: #1a1a2e;
+box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+}
+
+.cta-buttons .signup:hover {
+background: #00cccc;
+box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+}
+
+.cta-buttons .login {
+background: transparent;
+color: cyan;
+border: 2px solid cyan;
+}
+
+.cta-buttons .login:hover {
+background: cyan;
+color: #1a1a2e;
+box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+}
+
+.features {
+padding: 80px 20px;
+background: #16213e;
+text-align: center;
+}
+
+.features h2 {
+font-size: 2.5rem;
+margin-bottom: 40px;
+text-transform: uppercase;
+letter-spacing: 1px;
+}
+
+.feature-cards {
+display: flex;
+justify-content: center;
+gap: 30px;
+flex-wrap: wrap;
+}
+
+.feature-card {
+background: #1a1a2e;
+padding: 30px;
+border-radius: 10px;
+width: 300px;
+box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+transform: translateY(-10px);
+}
+
+.feature-card h3 {
+font-size: 1.5rem;
+margin-bottom: 15px;
+color: cyan;
+}
+
+.feature-card p {
+font-size: 1rem;
+opacity: 0.7;
+}
+
+footer {
+padding: 20px;
+text-align: center;
+background: #1a1a2e;
+font-size: 0.9rem;
+opacity: 0.7;
+}
